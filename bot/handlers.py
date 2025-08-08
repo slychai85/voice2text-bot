@@ -18,15 +18,20 @@ async def handle_voice(message: Message):
 
     # Скачиваем голосовое
     await message.bot.download_file(file_path, destination=file_name)
-    await message.answer("🔄 Распознаю голос...")
+    processing_msg = await message.answer("🔄 Распознаю голос...")
 
     # Обработка в фоне
-    loop = asyncio.get_running_loop()
-    text = await loop.run_in_executor(executor, transcribe_audio, file_name)
+    text = await asyncio.to_thread(transcribe_audio, file_name)
+    
+    # Удаляем временный файл
+    if os.path.exists(file_name):
+        os.remove(file_name)
 
-    os.remove(file_name)
+    # Удаляем сообщение о процессе
+    await processing_msg.delete()
+
+    # Отправляем результат
     await message.answer(f"🗣 Расшифровка:\n{text}")
-
 
 def register_handlers(dispatcher):
     dispatcher.include_router(router)
