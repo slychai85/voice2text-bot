@@ -1,0 +1,4 @@
+aiogram==3.21.0
+python-dotenv
+ffmpeg-python
+openai-whisper
