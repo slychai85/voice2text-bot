@@ -4,7 +4,7 @@ import uuid
 import subprocess
 
 # Загружаем модель один раз при импорте
-model = whisper.load_model("base")
+model = whisper.load_model("medium") # Замените на "base", "medium" или "large" при необходимости
 
 def transcribe_audio(input_path: str) -> str:
     output_path = f"{uuid.uuid4()}.wav"
@@ -16,7 +16,7 @@ def transcribe_audio(input_path: str) -> str:
         ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
         # Распознаём речь
-        result = model.transcribe(output_path)
+        result = model.transcribe(output_path, language="ru")
         text = result.get("text", "").strip()
 
         if not text:
