@@ -1,0 +1,12 @@
+version: "3.8"
+services:
+  voice2text-bot:
+    build: .
+    container_name: voice2text-bot
+    restart: unless-stopped
+    env_file: .env
+    # опционально: кэш моделей whisper между перезапусками
+    # volumes:
+    #   - whisper-cache:/home/botuser/.cache/whisper
+# volumes:
+#   whisper-cache:

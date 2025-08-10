@@ -6,6 +6,31 @@ from aiogram.types import Message
 from aiogram.enums import ChatType
 from bot.transcriber import transcribe_audio
 
+MAX_TG_LEN = 4096
+SAFE_LEN = 3500  # оставим запас под заголовки/эмодзи
+
+def _chunk_text(text: str, size: int = SAFE_LEN):
+    text = text.strip()
+    chunks = []
+    while text:
+        cut = text.rfind("\n", 0, size)
+        if cut == -1:
+            cut = text.rfind(" ", 0, size)
+        if cut == -1:
+            cut = min(len(text), size)
+        chunks.append(text[:cut].strip())
+        text = text[cut:].lstrip()
+    return chunks
+
+async def _send_long_text(message, text: str, header: str | None = None):
+    if header:
+        text = f"{header}\n{text}"
+    if len(text) <= MAX_TG_LEN:
+        await message.answer(text)
+        return
+    for part in _chunk_text(text):
+        await message.answer(part)
+
 router = Router()
 
 # лимит размера файла для скачивания (байты). 19 МБ — запас под лимит Telegram.
@@ -38,7 +63,7 @@ async def handle_voice(message: Message):
         # для голосовых фиксируем русский — лучшая точность
         text = await asyncio.to_thread(transcribe_audio, local_path, "ru")
         await processing_msg.delete()
-        await message.answer(f"🗣 Расшифровка:\n{text}")
+        await _send_long_text(message, text, "🗣 Расшифровка:")
     except ValueError as e:
         await processing_msg.delete()
         await message.answer(f"⚠️ {e}. Отправь, пожалуйста, более короткое голосовое.")
@@ -78,7 +103,7 @@ async def handle_video_private(message: Message):
         # для видео — автоопределение языка; если не ru, переводим в transcriber (если настроен)
         text = await asyncio.to_thread(transcribe_audio, local_path, None)
         await processing_msg.delete()
-        await message.answer(f"🗣 Расшифровка из видео:\n{text}")
+        await _send_long_text(message, text, "🗣 Расшифровка из видео:")
     except ValueError as e:
         await processing_msg.delete()
         await message.answer(f"⚠️ {e}. Сожми видео или пришли короче 19 МБ.")
