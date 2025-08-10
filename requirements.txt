@@ -4,3 +4,4 @@ ffmpeg-python
 faster-whisper
 argostranslate
 tqdm
+openai>=1.40.0
