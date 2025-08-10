@@ -1,0 +1,25 @@
+# VCS
+.git
+.gitignore
+
+# Python env & caches
+venv*/
+.venv*/
+__pycache__/
+*.pyc
+
+# Local configs
+.env
+.env.*
+
+# Temp / media / caches
+tmp/
+*.wav
+*.oga
+*.ogg
+*.mp4
+*.m4a
+*.webm
+*.mov
+.DS_Store
+.cache/

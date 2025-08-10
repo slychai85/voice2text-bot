@@ -1,0 +1,13 @@
+services:
+  voice2text-bot:
+    build: .
+    container_name: voice2text-bot
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      XDG_CACHE_HOME: /home/botuser/.cache
+      ARGOS_DATA_DIR: /home/botuser/.cache/argos-translate
+    volumes:
+      - bot-cache:/home/botuser/.cache
+volumes:
+  bot-cache:
