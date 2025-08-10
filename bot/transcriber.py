@@ -1,17 +1,12 @@
 import whisper
-import os
-import uuid
-import subprocess
+import os, uuid, subprocess
 from typing import Optional
+from googletrans import Translator
 
-model = whisper.load_model("medium")  # можно использовать "base", "small", "medium", "large" в зависимости от нужд и ресурсов
+model = whisper.load_model("medium") # модель Whisper для распознавания речи base, small, medium, large
+translator = Translator()  # онлайн-перевод
 
 def transcribe_audio(input_path: str, language: Optional[str] = "ru") -> str:
-    """
-    language:
-      - "ru"  → ожидать русскую речь (лучше для голосовых)
-      - None  → автоопределение языка (удобно для видео)
-    """
     wav_path = f"{uuid.uuid4()}.wav"
     try:
         subprocess.run([
@@ -20,12 +15,23 @@ def transcribe_audio(input_path: str, language: Optional[str] = "ru") -> str:
 
         kwargs = {}
         if language is not None:
-            kwargs["language"] = language  # это ЯЗЫК АУДИО, не язык вывода
+            kwargs["language"] = language  # язык аудио
 
         result = model.transcribe(wav_path, **kwargs)
-        text = result.get("text", "").strip()
+        text = (result.get("text") or "").strip()
+        detected = result.get("language")  # 'en', 'ru', ...
+
         if not text:
             return "⚠️ Не удалось распознать речь. Попробуйте ещё раз."
+
+        # если автоопределяли и это не русский — переведём в ru
+        if language is None and detected and detected != "ru":
+            try:
+                text_ru = translator.translate(text, src=detected, dest="ru").text
+                return text_ru.strip() or text
+            except Exception:
+                return text  # если перевод упал — вернём оригинал
+
         return text
     except Exception as e:
         return f"❌ Ошибка при распознавании: {e}"

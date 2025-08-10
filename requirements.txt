@@ -5,6 +5,7 @@ aiohttp==3.12.15
 aiosignal==1.4.0
 annotated-types==0.7.0
 attrs==25.3.0
+argostranslate
 certifi==2025.8.3
 charset-normalizer==3.4.2
 ffmpeg-python==0.2.0
@@ -12,6 +13,7 @@ filelock==3.18.0
 frozenlist==1.7.0
 fsspec==2025.7.0
 future==1.0.0
+googletrans==4.0.0rc1
 idna==3.10
 Jinja2==3.1.6
 llvmlite==0.44.0
