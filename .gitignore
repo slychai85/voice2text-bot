@@ -5,3 +5,12 @@ __pycache__/
 *.wav
 *.oga
 venv/
+# temp media
+*.wav
+*.oga
+*.ogg
+*.mp4
+*.m4a
+*.webm
+*.mov
+tmp/
