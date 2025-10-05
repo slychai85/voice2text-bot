@@ -77,7 +77,7 @@ colima start --cpu 4 --memory 8 --disk 60
 ### 1) Клонирование и .env
 
 ```bash
-git clone https://github.com/<you>/voice2text-bot.git
+git clone https://github.com/slychai85/voice2text-bot.git
 cd voice2text-bot
 cp .env.example .env
 # открой .env и впиши BOT_TOKEN
